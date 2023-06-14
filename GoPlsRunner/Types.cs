@@ -15,7 +15,7 @@ public class InitializeParamsExt
     public object InitializationOptions { get; set; }
 
     [DataMember(Name = "capabilities")]
-    public ClientCapabilities Capabilities { get; set; }
+    public object Capabilities { get; set; }
 
     [DataMember(Name = "rootUri")]
     public string RootUri { get; set; }

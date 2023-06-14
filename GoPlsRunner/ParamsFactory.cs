@@ -1,4 +1,6 @@
+using System.Runtime.Serialization;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Newtonsoft.Json;
 
 namespace GoPlsRunner;
 
@@ -7,8 +9,9 @@ public class ParamsFactory
     private static string _rootPath;
     private static string _cacheFolderPath = "/home/ohad/tmp";
 
-    public static DidOpenTextDocumentParams GetDidOpenParams(string filePath) =>
-        new()
+    public static DidOpenTextDocumentParams GetDidOpenParams(string filePath)
+    {
+        return new DidOpenTextDocumentParams
         {
             TextDocument = new TextDocumentItem
             {
@@ -18,17 +21,22 @@ public class ParamsFactory
                 Version = 1
             }
         };
+    }
 
     protected static string FilePathToUriString(string filePath)
-        => new Uri(filePath).ToString();
+    {
+        return new Uri(filePath).ToString();
+    }
 
 
     public static TextDocumentPositionParams GetPositionParams(string filePath, Position position)
-        => new()
+    {
+        return new TextDocumentPositionParams
         {
-            TextDocument = new() { Uri = new Uri(filePath) },
-            Position = position,
+            TextDocument = new TextDocumentIdentifier { Uri = new Uri(filePath) },
+            Position = position
         };
+    }
 
     public static TextDocumentPositionParams GetHoverParams(string filePath, Position position)
     {
@@ -42,33 +50,104 @@ public class ParamsFactory
         };
     }
 
-    public static InitializeParamsExt GetInitObject(string rootPath)
-        => new()
+    public static object GetInitObject(string rootPath)
+    {
+        return new Dictionary<string, object>
         {
-            ProcessId = Environment.ProcessId,
-            RootUri = rootPath,
-            WorkspaceFolders = DetermineWorkspaceFolders(rootPath),
-            Capabilities = new ClientCapabilities
-            {
-                TextDocument = new TextDocumentClientCapabilities
+            { "processId", Environment.ProcessId },
+            { "clientInfo", new Dictionary<string, string> { { "name", "" }, { "version", "" } } },
+            { "locale", "" },
+            { "rootUri", new Uri(FilePathToUri(rootPath)).ToString() },
+            { "rootPath", new Uri(FilePathToUri(rootPath)).ToString() },
+            { 
+                "capabilities", new Dictionary<object, object>
                 {
-                    Hover = new HoverSetting { ContentFormat = new[] { MarkupKind.PlainText } },
-                    References = new DynamicRegistrationSetting()
-                },
-                Workspace = new WorkspaceClientCapabilities()
+                    { "workspace", null },
+                    {
+                        "textDocument", new Dictionary<string, object>
+                        {
+                            {
+                                "definition", new Dictionary<string, object>{
+                                {
+                                    "linkSupport", true
+                                }}
+                            }
+                        }
+                    },
+                    { "notebookDocument", null },
+                    { "window", null },
+                    { "general", null },
+                    { "experimental", null }
+                }
             },
-            InitializationOptions = new
             {
-                symbolStyle = "Full",
-                hoverKind = "fullDocumentation"
+                "initializationOptions", new Dictionary<object, object>
+                {
+                    { "preferences", "test" },
+                //     {
+                //     "tsserver", new Dictionary<string,object>
+                //     {
+                //         {"useSyntaxServer", "auto"}
+                //     }
+                // }
+                }
+            },
+            { "trace", null },
+
+        };
+    }
+
+    public static DidOpenTextDocumentParams GetOpenFileObject(string rootPath, string content)
+    {
+        return new DidOpenTextDocumentParams()
+        {
+            TextDocument = new TextDocumentItem()
+            {
+                Uri = new Uri(rootPath),
+                LanguageId = "typescript",
+                Version = 0,
+                Text = content
             }
         };
+    }
+    [DataContract]
+    public class MyDidOpenTextDocumentParams
+    {
+        /// <summary>
+        /// Gets or sets the <see cref="T:Microsoft.VisualStudio.LanguageServer.Protocol.TextDocumentItem" /> which represents the text document that was opened.
+        /// </summary>
+        [DataMember(Name = "textDocument")]
+        public MyTextDocumentItem TextDocument { get; set; }
+    }
+    public class MyTextDocumentItem
+    {
+        /// <summary>Gets or sets the document URI.</summary>
+        [DataMember(Name = "uri")]
+        [JsonConverter(typeof (DocumentUriConverter))]
+        public string Uri { get; set; }
+
+        /// <summary>Gets or sets the document language identifier.</summary>
+        [DataMember(Name = "languageId")]
+        public string LanguageId { get; set; }
+
+        /// <summary>Gets or sets the document version.</summary>
+        [DataMember(Name = "version")]
+        public int Version { get; set; }
+
+        /// <summary>Gets or sets the content of the opened text document.</summary>
+        [DataMember(Name = "text")]
+        public string Text { get; set; }
+    }
 
     private static string FilePathToUri(string filePath)
-        => new Uri(filePath).ToString();
+    {
+        return new Uri(filePath).ToString();
+    }
 
-    static string RelativizePath(string relativePath, string absolutePath) =>
-        Path.GetRelativePath(relativePath, absolutePath);
+    private static string RelativizePath(string relativePath, string absolutePath)
+    {
+        return Path.GetRelativePath(relativePath, absolutePath);
+    }
 
     private static WorkspaceFolder[] DetermineWorkspaceFolders(string rootPath)
     {

@@ -14,23 +14,17 @@ class Program
     
     static async Task Main(string[] args)
     {
-        Foo(Blas);
-        var exePath = "/home/ohad/src/go/tools/gopls/gopls";
+        
+        var exePath = "/Users/ariellevy/.nvm/versions/node/v16.17.0/bin/typescript-language-server";
         await PlsRunner.Run(
             exePath,
-            repositoryRoot: "/home/ohad/src/repros/cmp_main",
+            repositoryRoot: "/Users/ariellevy/dev/viveckh-veniqa",
             fileName:
-            "/home/ohad/src/repros/cmp_main/services/flexsave/aws/functions/aws-account-nuker/rebuy-mocks/mock_cloudformationiface/mock.go",
-            position: new Position(4127, 28)); // lines are 0 based
+            "/Users/ariellevy/dev/viveckh-veniqa/management-server/routes/orders.js",
+            position: new Position(17, 79));// lines are 0 based
         
         Console.WriteLine("The end");
         
     }
-
-    public static void Foo(Func<int, string> func)
-    {
-        var s = func(1);
-        Console.WriteLine(s);
-        
-    }
+    
 }

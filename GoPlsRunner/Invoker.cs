@@ -5,30 +5,59 @@ namespace GoPlsRunner;
 
 public class Invoker
 {
-    public static async Task<InitializeResult> InvokeInitAsync(InitializeParamsExt initParams, JsonRpc rpc)
+    public static async Task<InitializeResult> InvokeInitAsync(object initParams, JsonRpc rpc)
     {
         return await InvokeWithParameterObjectAsync<InitializeResult>("initialize", rpc, initParams);
     }
 
     public static async Task InvokeInitializedAsync(JsonRpc rpc)
     {
-        await rpc.InvokeWithParameterObjectAsync("initialized", new { });
+        await rpc.NotifyAsync("initialized", new { });
     }
 
-    public static async Task<Hover> InvokeHoverAsync(TextDocumentPositionParams hoverParams, JsonRpc rpc)
-        => await InvokeWithParameterObjectAsync<Hover>("textDocument/hover", rpc, hoverParams);
-
+    public static async Task<object> InvokeHoverAsync(TextDocumentPositionParams hoverParams, JsonRpc rpc)
+    {
+        return await InvokeWithParameterObjectAsync<object>("textDocument/hover", rpc, hoverParams);
+    }
+    
+    public static async Task<object> InvokeImplementation(TextDocumentPositionParams hoverParams, JsonRpc rpc)
+    {
+        return await InvokeWithParameterObjectAsync<object>("textDocument/implementation", rpc, hoverParams);
+    }
+    
     public static async Task OpenTextDocumentAsync(DidOpenTextDocumentParams openParams, JsonRpc rpc)
-        => await rpc.InvokeWithParameterObjectAsync("textDocument/didOpen", openParams);
+    {
+        await rpc.NotifyWithParameterObjectAsync("textDocument/didOpen", openParams);
+    }
 
     public static async Task ShutdownAsync(JsonRpc rpc)
-        => await rpc.InvokeWithParameterObjectAsync("shutdown", new { });
+    {
+        await rpc.InvokeWithParameterObjectAsync("shutdown", new { });
+    }
 
 
-    public static async Task<Location[]> InvokeGotoDefinitionAsync(TextDocumentPositionParams positionParams,
+    public static async Task<Location[]> InvokeGotoDefinitionThroughCommandAsync(TextDocumentPositionParams positionParams,
         JsonRpc rpc)
     {
+        return await InvokeWithParameterObjectAsync<Location[]>("workspace/executeCommand", rpc,
+            new Dictionary<string, object>
+            {
+                { "command", "_typescript.goToSourceDefinition" },
+                {
+                    "arguments", new List<object> { positionParams.TextDocument.Uri, positionParams.Position }
+                }
+            });
+    }
+
+    public static async Task<Location[]> GotoDefinitionAsync(TextDocumentPositionParams positionParams, JsonRpc rpc)
+    {
         return await InvokeWithParameterObjectAsync<Location[]>("textDocument/definition", rpc, positionParams);
+    }
+    
+    public static async Task<Location[]> GotoTypeDefinitionAsync(TextDocumentPositionParams positionParams, JsonRpc rpc)
+    {
+        return await InvokeWithParameterObjectAsync<Location[]>("textDocument/typeDefinition", rpc,
+            positionParams);
     }
 
     public static async Task<Location[]> InvokeGotoDeclarationAsync(TextDocumentPositionParams positionParams,
