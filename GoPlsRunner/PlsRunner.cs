@@ -22,12 +22,8 @@ public class PlsRunner
         {
             Console.WriteLine("poop");
         }
-        await DoOpenFile("/Users/ariellevy/dev/viveckh-veniqa/management-server/routes/catalog.js", _rpc);
-        await DoOpenFile("/Users/ariellevy/dev/viveckh-veniqa/management-server/routes/index.js", _rpc);
-        // await DoOpenFile("/Users/ariellevy/dev/viveckh-veniqa/management-server/routes/orders.js", _rpc);
-        await DoOpenFile("/Users/ariellevy/dev/viveckh-veniqa/management-server/routes/referenceData.js", _rpc);
-        await DoOpenFile("/Users/ariellevy/dev/viveckh-veniqa/management-server/routes/security.js", _rpc);
-        await DoOpenFile("/Users/ariellevy/dev/viveckh-veniqa/management-server/routes/superAdmin.js", _rpc);
+        await DoOpenFile("/Users/ariellevy/dev/adaptiveconsulting-reactivetradercloud/src/new-client/src/services/executions/executions.ts", _rpc);
+
 
         await DoOpenFile(fileName, _rpc);
         
@@ -38,8 +34,8 @@ public class PlsRunner
             {
                 var x = await Invoker.InvokeGotoDefinitionThroughCommandAsync(positionParams, _rpc);
                 var y = await Invoker.GotoDefinitionAsync(positionParams, _rpc);
-                var hover = await Invoker.InvokeHoverAsync(positionParams, _rpc);
-                 var locations = await Invoker.GotoTypeDefinitionAsync(positionParams, _rpc);
+                // var hover = await Invoker.InvokeHoverAsync(positionParams, _rpc);
+                // var locations = await Invoker.GotoTypeDefinitionAsync(positionParams, _rpc);
                 PrintLocations(x);
             }
             catch

@@ -59,7 +59,7 @@ public class ParamsFactory
             { "locale", "" },
             { "rootUri", new Uri(FilePathToUri(rootPath)).ToString() },
             { "rootPath", new Uri(FilePathToUri(rootPath)).ToString() },
-            { 
+            {
                 "capabilities", new Dictionary<object, object>
                 {
                     { "workspace", null },
@@ -67,10 +67,12 @@ public class ParamsFactory
                         "textDocument", new Dictionary<string, object>
                         {
                             {
-                                "definition", new Dictionary<string, object>{
+                                "definition", new Dictionary<string, object>
                                 {
-                                    "linkSupport", true
-                                }}
+                                    {
+                                        "linkSupport", true
+                                    }
+                                }
                             }
                         }
                     },
@@ -83,25 +85,24 @@ public class ParamsFactory
             {
                 "initializationOptions", new Dictionary<object, object>
                 {
-                    { "preferences", "test" },
-                //     {
-                //     "tsserver", new Dictionary<string,object>
-                //     {
-                //         {"useSyntaxServer", "auto"}
-                //     }
-                // }
+                    { "preferences", "test" }
+                    //     {
+                    //     "tsserver", new Dictionary<string,object>
+                    //     {
+                    //         {"useSyntaxServer", "auto"}
+                    //     }
+                    // }
                 }
             },
-            { "trace", null },
-
+            { "trace", null }
         };
     }
 
     public static DidOpenTextDocumentParams GetOpenFileObject(string rootPath, string content)
     {
-        return new DidOpenTextDocumentParams()
+        return new DidOpenTextDocumentParams
         {
-            TextDocument = new TextDocumentItem()
+            TextDocument = new TextDocumentItem
             {
                 Uri = new Uri(rootPath),
                 LanguageId = "typescript",
@@ -109,34 +110,6 @@ public class ParamsFactory
                 Text = content
             }
         };
-    }
-    [DataContract]
-    public class MyDidOpenTextDocumentParams
-    {
-        /// <summary>
-        /// Gets or sets the <see cref="T:Microsoft.VisualStudio.LanguageServer.Protocol.TextDocumentItem" /> which represents the text document that was opened.
-        /// </summary>
-        [DataMember(Name = "textDocument")]
-        public MyTextDocumentItem TextDocument { get; set; }
-    }
-    public class MyTextDocumentItem
-    {
-        /// <summary>Gets or sets the document URI.</summary>
-        [DataMember(Name = "uri")]
-        [JsonConverter(typeof (DocumentUriConverter))]
-        public string Uri { get; set; }
-
-        /// <summary>Gets or sets the document language identifier.</summary>
-        [DataMember(Name = "languageId")]
-        public string LanguageId { get; set; }
-
-        /// <summary>Gets or sets the document version.</summary>
-        [DataMember(Name = "version")]
-        public int Version { get; set; }
-
-        /// <summary>Gets or sets the content of the opened text document.</summary>
-        [DataMember(Name = "text")]
-        public string Text { get; set; }
     }
 
     private static string FilePathToUri(string filePath)
@@ -158,5 +131,36 @@ public class ParamsFactory
             : moduleDirectories
                 .Select(_ => new WorkspaceFolder { Name = RelativizePath(rootPath, _), Uri = FilePathToUri(_) })
                 .ToArray();
+    }
+
+    [DataContract]
+    public class MyDidOpenTextDocumentParams
+    {
+        /// <summary>
+        ///     Gets or sets the <see cref="T:Microsoft.VisualStudio.LanguageServer.Protocol.TextDocumentItem" /> which represents
+        ///     the text document that was opened.
+        /// </summary>
+        [DataMember(Name = "textDocument")]
+        public MyTextDocumentItem TextDocument { get; set; }
+    }
+
+    public class MyTextDocumentItem
+    {
+        /// <summary>Gets or sets the document URI.</summary>
+        [DataMember(Name = "uri")]
+        [JsonConverter(typeof(DocumentUriConverter))]
+        public string Uri { get; set; }
+
+        /// <summary>Gets or sets the document language identifier.</summary>
+        [DataMember(Name = "languageId")]
+        public string LanguageId { get; set; }
+
+        /// <summary>Gets or sets the document version.</summary>
+        [DataMember(Name = "version")]
+        public int Version { get; set; }
+
+        /// <summary>Gets or sets the content of the opened text document.</summary>
+        [DataMember(Name = "text")]
+        public string Text { get; set; }
     }
 }

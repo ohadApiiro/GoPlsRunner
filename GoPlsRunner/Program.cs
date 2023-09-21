@@ -18,10 +18,10 @@ class Program
         var exePath = "/Users/ariellevy/.nvm/versions/node/v16.17.0/bin/typescript-language-server";
         await PlsRunner.Run(
             exePath,
-            repositoryRoot: "/Users/ariellevy/dev/viveckh-veniqa",
+            repositoryRoot: "/Users/ariellevy/dev/adaptiveconsulting-reactivetradercloud",
             fileName:
-            "/Users/ariellevy/dev/viveckh-veniqa/management-server/routes/orders.js",
-            position: new Position(17, 79));// lines are 0 based
+            "/Users/ariellevy/dev/adaptiveconsulting-reactivetradercloud/src/new-client/src/services/executions/executions.ts",
+            position: new Position(43, 8));// lines are 0 based
         
         Console.WriteLine("The end");
         
