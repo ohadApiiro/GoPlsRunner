@@ -14,13 +14,14 @@ public class PlsRunner
         _rpc = new JsonRpc(process.StandardInput.BaseStream, process.StandardOutput.BaseStream);
         _rpc.StartListening();
         await DoInit(repositoryRoot, _rpc);
+        
+        var positionParams = ParamsFactory.GetPositionParams(fileName, position);
+        //var locations = await Invoker.InvokeGotoDefinitionAsync(positionParams, _rpc);
 
-        for (int i = 0; i < 1000; i++)
-        {
-            var positionParams = ParamsFactory.GetPositionParams(fileName, position);
-            var locations = await Invoker.InvokeGotoDefinitionAsync(positionParams, _rpc);
-            PrintLocations(locations);
-        }
+        var referenceParams = ParamsFactory.GetReferenceParams(fileName, position);
+        var locations = await Invoker.InvokeFindAllReferencesAsync(referenceParams, _rpc);
+        
+        PrintLocations(locations);
 
         await Invoker.ShutdownAsync(_rpc);
     }

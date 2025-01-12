@@ -31,6 +31,12 @@ public class Invoker
         return await InvokeWithParameterObjectAsync<Location[]>("textDocument/definition", rpc, positionParams);
     }
 
+    public static async Task<Location[]> InvokeFindAllReferencesAsync(TextDocumentPositionParams positionParams,
+        JsonRpc rpc)
+    {
+        return await InvokeWithParameterObjectAsync<Location[]>("textDocument/references", rpc, positionParams);
+    }
+
     public static async Task<Location[]> InvokeGotoDeclarationAsync(TextDocumentPositionParams positionParams,
         JsonRpc rpc)
     {

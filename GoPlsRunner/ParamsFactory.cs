@@ -30,6 +30,16 @@ public class ParamsFactory
             Position = position,
         };
 
+    public static ReferenceParams GetReferenceParams(string filePath, Position position)
+        => new ReferenceParams()
+        {
+            Position = position,
+            TextDocument = new TextDocumentIdentifier
+            {
+                Uri = new Uri(filePath)
+            }
+        };
+    
     public static TextDocumentPositionParams GetHoverParams(string filePath, Position position)
     {
         return new TextDocumentPositionParams
@@ -46,7 +56,7 @@ public class ParamsFactory
         => new()
         {
             ProcessId = Environment.ProcessId,
-            RootUri = rootPath,
+            RootUri = new Uri(rootPath).ToString(),
             WorkspaceFolders = DetermineWorkspaceFolders(rootPath),
             Capabilities = new ClientCapabilities
             {
